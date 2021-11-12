@@ -1,0 +1,5 @@
+vertexlitgeneric
+{
+	$basetexture models/bohemia_arma3/military_watch_glass_ca
+	$alphatest 1
+}
