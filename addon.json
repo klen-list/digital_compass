@@ -1,0 +1,14 @@
+{
+	"title" : "digital compass (toggle ui)",
+	"type" : "tool",
+	"tags" : ["roleplay", "realism"],
+	"ignore" :
+	[
+		".git/*",
+		"src/*",
+		"LICENSE",
+		"README.md",
+		"arma3_compass.png",
+		".gitattributes"
+	]
+}
