@@ -20,14 +20,14 @@ surface.CreateFont("Compass3DSmall", {
 })
 
 local cvar_digital_enabled = CreateClientConVar("compass_digital_enable", 1)
-local compass_digital_color = CreateClientConVar("compass_digital_color", "255 255 255 150")
+local cvar_digital_color = CreateClientConVar("compass_digital_color", "255 255 255 150")
 local cvar_forward_offset = CreateClientConVar("compass_forward_offs", 11)
 local cvar_up_offset = CreateClientConVar("compass_up_offs", 4)
 local cvar_pitch_offset = CreateClientConVar("compass_angle_offs", -40)
 
 concommand.Add("compass_reset_settings", function()
-	compass_digital_enable:SetInt(1)
-	compass_digital_color:SetString"255 255 255 150"
+	cvar_digital_enabled:SetInt(1)
+	cvar_digital_color:SetString"255 255 255 150"
 	cvar_forward_offset:SetInt(11)
 	cvar_up_offset:SetInt(4)
 	cvar_pitch_offset:SetInt(-40)
@@ -55,15 +55,20 @@ local function SetCompassAngle(deg)
 	compass_star_rotated:SetMatrix("$basetexturetransform", star_matrix)
 end
 
+local function GetColorFromStr(str)
+	local r, g, b, a = string.match(str, "(%d+)% (%d+)% (%d+)% (%d+)")
+	if r and g and b and a then
+		return Color(r, g, b, a)
+	end
+	return Color(255, 255, 255, 150)
+end
+
 local DISABLED, pos, ang, angle = true, Vector(), Angle(), Angle()
 local grad_col = Color(0, 0, 0, 255)
-local text_col = Color(255, 255, 255, 150)
+local text_col = GetColorFromStr(cvar_digital_color:GetString())
 
 cvars.AddChangeCallback("compass_digital_color", function(_, __, new)
-	local r, g, b, a = string.match(new, "(%d+)% (%d+)% (%d+)% (%d+)")
-	if r and g and b and a then
-		text_col = Color(r, g, b, a)
-	end
+	text_col = GetColorFromStr(new)
 end)
 
 local function RenderDigital()
@@ -93,8 +98,8 @@ local function RenderDigital()
 				deg == 180 and "S" or 
 				deg < 270 and "SW" or
 				deg == 270 and "W" or
-			deg < 360 and "NW", "Compass3DSmall", 190 + x * .5, 20 + 27 + 7, text_col) 
-			draw.DrawText(string.format("%d'%d''", min, sec), "Compass3DSmall", 190 + x * .5, 20 + 27 + 7 + 37, text_col)
+			deg < 360 and "NW", "Compass3DSmall", 190 + x * .5, 54, text_col) 
+			draw.DrawText(string.format("%d'%d''", min, sec), "Compass3DSmall", 190 + x * .5, 91, text_col)
 		render.PopFilterMag()
 		render.PopFilterMin()
 	cam.End3D2D()
@@ -103,15 +108,15 @@ end
 local function Arma3CompassRender()
 	if DISABLED then return end
 
-	if not CompassCEnt then
-		CompassCEnt = ClientsideModel(mdl)
+	if not IsValid(CompassCEnt) then
+		CompassCEnt = ClientsideModel(mdl) -- CSEntity [class C_BaseFlex]
 		CompassCEnt:Spawn()
 	end
 
-	local ply = LocalPlayer()
-	ang = ply:EyeAngles()
-	pos = ply:EyePos()
-	angle = ang.y
+	local viewent = GetViewEntity()
+	ang = viewent:EyeAngles()
+	pos = viewent:EyePos()
+	angle = -ang.y
 
 	SetCompassAngle(angle)
 
