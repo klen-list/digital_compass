@@ -145,6 +145,10 @@ end
 local function Arma3CompassRender()
 	if DISABLED then return end
 
+	local lply = LocalPlayer()
+	if not (IsValid(lply) and lply:Alive()) then return end
+	--      ^  o no, player entity is gone! (yes, it's possible)
+
 	if not IsValid(CompassCEnt) then
 		CompassCEnt = ClientsideModel(mdl) -- CSEntity [class C_BaseFlex]
 		CompassCEnt:Spawn()
