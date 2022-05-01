@@ -106,7 +106,7 @@ local text_col = GetColorFromStr(cvar_digital_color:GetString())
 
 cvars_AddChangeCallback("compass_digital_color", function(_, __, new)
 	text_col = GetColorFromStr(new)
-end)
+end, "update_color")
 
 local function RenderDigital()
 	ang:RotateAroundAxis(ang:Right(), -65)
