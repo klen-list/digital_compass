@@ -93,8 +93,8 @@ local function SetCompassAngle(deg)
 end
 
 local function GetColorFromStr(str)
-	local r, g, b, a = string_match(str, "(%d+)% (%d+)% (%d+)% (%d+)")
-	if r and g and b and a then
+	local r, g, b, a = string_match(str, "(%d+)% (%d+)% (%d+)% *(%d*)")
+	if r and g and b then
 		return Color(r, g, b, a)
 	end
 	return Color(255, 255, 255, 150)
